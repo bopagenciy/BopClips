@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Loader2, Download, Film, FolderOpen } from 'lucide-react';
 import { apiJson } from '../lib/api';
+import { useLanguage } from '../i18n';
 
 // The signed-in user's saved video library (stored in R2). Private, signed links.
 // Videos are grouped by project (job); re-openable projects get a "reopen"
 // action that restores the whole job for further editing in the Clip Generator.
 export default function HistoryTab({ onReopenProject }) {
+  const { t } = useLanguage();
   const [videos, setVideos] = useState(null);
   const [projects, setProjects] = useState({});
   const [reopening, setReopening] = useState(null);
@@ -56,10 +58,10 @@ export default function HistoryTab({ onReopenProject }) {
 
   return (
     <div className="h-full overflow-y-auto p-8 max-w-5xl mx-auto animate-fade">
-      <p className="eyebrow mb-1.5">07 · HISTORY</p>
-      <h1 className="font-display lowercase text-2xl text-ink mb-2">Your library</h1>
+      <p className="eyebrow mb-1.5">{t('historyTab.eyebrow', '07 · HISTORIAL')}</p>
+      <h1 className="font-display lowercase text-2xl text-ink mb-2">{t('historyTab.title', 'Tu biblioteca')}</h1>
       <p className="text-muted text-sm mb-8 lowercase">
-        All the shorts you've generated, saved while your plan is active. Kept for 7 days after your plan ends. Reopen a project to keep editing its clips.
+        {t('historyTab.desc', "Todos los videos que has generado en Bop Clips.")}
       </p>
 
       {error && <p className="text-danger text-sm">{error}</p>}
@@ -68,7 +70,7 @@ export default function HistoryTab({ onReopenProject }) {
       {videos && videos.length === 0 && (
         <div className="text-center py-20 text-muted">
           <Film size={40} className="mx-auto mb-4 text-muted" />
-          <p className="lowercase">No videos yet. Generate your first short from the Clip Generator.</p>
+          <p className="lowercase">{t('historyTab.empty', 'No videos yet.')}</p>
         </div>
       )}
 
@@ -83,7 +85,7 @@ export default function HistoryTab({ onReopenProject }) {
                     {project?.title || vids[0]?.title || 'Project'}
                   </p>
                   <p className="readout mt-0.5">
-                    {fmtDate(vids[0]?.created_at)} · {vids.length} clip{vids.length === 1 ? '' : 's'}
+                    {fmtDate(vids[0]?.created_at)} · {vids.length} {t('historyTab.clipsCount', 'clip(s)')}
                   </p>
                 </div>
                 {project && onReopenProject && (
@@ -91,11 +93,11 @@ export default function HistoryTab({ onReopenProject }) {
                     onClick={() => handleReopen(jobId)}
                     disabled={!!reopening}
                     className="btn-ghost px-3 py-2 text-xs shrink-0"
-                    title="Restore this project in the Clip Generator to keep editing subtitles, hooks, effects and dubbing"
+                    title={t('historyTab.reopen', 'reopen project')}
                   >
                     {reopening === jobId
-                      ? <><Loader2 size={14} className="animate-spin" /> reopening…</>
-                      : <><FolderOpen size={14} /> reopen project</>}
+                      ? <><Loader2 size={14} className="animate-spin" /> {t('historyTab.reopening', 'reopening…')}</>
+                      : <><FolderOpen size={14} /> {t('historyTab.reopen', 'reopen project')}</>}
                   </button>
                 )}
               </div>
@@ -109,8 +111,8 @@ export default function HistoryTab({ onReopenProject }) {
                       <p className="text-sm text-ink font-medium line-clamp-2 mb-1" title={v.title}>{v.title || 'Short'}</p>
                       <div className="flex items-center justify-between">
                         <span className="readout">{fmtDate(v.created_at)}</span>
-                        <a href={v.download_url} className="text-micro font-mono uppercase text-brass hover:text-ink flex items-center gap-1 transition-colors" title="Download">
-                          <Download size={14} /> Download
+                        <a href={v.download_url} className="text-micro font-mono uppercase text-brass hover:text-ink flex items-center gap-1 transition-colors" title={t('common.download', 'Download')}>
+                          <Download size={14} /> {t('common.download', 'Download')}
                         </a>
                       </div>
                     </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Download, Share2, Instagram, Youtube, Video, AlertCircle, Loader2, Copy, Check, Wand2, Type, Calendar, Languages, FileText, Link2, Scissors, Crosshair, TrendingUp } from 'lucide-react';
+import { useLanguage } from '../i18n';
 import { getApiUrl } from '../config';
 import { apiFetch } from '../lib/api';
 import SubtitleModal from './SubtitleModal';
@@ -37,6 +38,7 @@ function formatDuration(clip) {
 }
 
 export default function ResultCard({ clip, index, jobId, durable, uploadPostKey, uploadUserId, geminiApiKey, elevenLabsKey, isManaged, onPlay, onPause, onBulkSubtitle, clipCount = 1, bulkProgress, initialState = null, onStateChange, connectedPlatforms = null, onConnectSocials, onEditClip = null, onReframeClip = null, onUpgrade = null }) {
+    const { t } = useLanguage();
     const [showModal, setShowModal] = useState(false);
     // The "why" line is clamped to two lines so cards in a row stay level;
     // when it overflows, a hover (desktop) or tap (touch) shows the whole
@@ -803,7 +805,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                     {Number.isFinite(clip.predicted_score) && (
                         <span
                             className="bg-black/70 font-mono text-micro uppercase px-2 py-1 rounded-full flex items-center gap-1"
-                            title="openshorts' prediction of how well this clip will perform, from 0 to 100"
+                            title="bop clips' prediction of how well this clip will perform, from 0 to 100"
                         >
                             <TrendingUp size={11} className="shrink-0 text-muted" />
                             <span className="text-muted">viral</span>
@@ -847,7 +849,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                                 ref={whyRef}
                                 className={`text-xs text-muted leading-snug line-clamp-2 break-words ${whyClamped ? 'cursor-pointer' : ''}`}
                                 onClick={() => whyClamped && setWhyOpen(v => !v)}
-                                aria-label="why openshorts picked this moment"
+                                aria-label="why bop clips picked this moment"
                             >
                                 {clip.why}
                             </p>
@@ -923,7 +925,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                             className={QUIET_BTN}
                         >
                             <Scissors size={16} className="text-muted group-hover:text-brass transition-colors shrink-0" />
-                            edit clip
+                            {t('common.edit')}
                         </button>
                     )}
 
@@ -933,7 +935,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                             className={QUIET_BTN}
                         >
                             <Crosshair size={16} className="text-muted group-hover:text-brass transition-colors shrink-0" />
-                            reframing
+                            {t('resultCard.reframe')}
                         </button>
                     )}
 
@@ -952,7 +954,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                         className={QUIET_BTN}
                     >
                         {isSubtitling ? <Loader2 size={16} className="animate-spin text-brass shrink-0" /> : <Type size={16} className="text-muted group-hover:text-brass transition-colors shrink-0" />}
-                        {isSubtitling ? 'adding…' : 'subtitles'}
+                        {isSubtitling ? 'adding…' : t('resultCard.subtitles')}
                     </button>
 
                     <button
@@ -961,7 +963,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                         className={QUIET_BTN}
                     >
                         {isHooking ? <Loader2 size={16} className="animate-spin text-brass shrink-0" /> : <Wand2 size={16} className="text-muted group-hover:text-brass transition-colors shrink-0" />}
-                        {isHooking ? 'saving…' : 'edit hook'}
+                        {isHooking ? 'saving…' : t('resultCard.editHook')}
                     </button>
 
                     <button
@@ -970,14 +972,14 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                         className={QUIET_BTN}
                     >
                         {isTranslating ? <Loader2 size={16} className="animate-spin text-brass shrink-0" /> : <Languages size={16} className="text-muted group-hover:text-brass transition-colors shrink-0" />}
-                        {isTranslating ? 'translating…' : 'dub voice'}
+                        {isTranslating ? 'translating…' : t('resultCard.translateAudio')}
                     </button>
 
                     <button
                         onClick={() => setShowModal(true)}
                         className="btn-primary flex-col gap-1 py-2.5 sm:py-2 px-1 text-[11px] leading-none rounded-input whitespace-nowrap"
                     >
-                        <Share2 size={16} className="shrink-0" /> post
+                        <Share2 size={16} className="shrink-0" /> {t('resultCard.publish')}
                     </button>
                     <button
                         onClick={(e) => {
@@ -993,7 +995,7 @@ export default function ResultCard({ clip, index, jobId, durable, uploadPostKey,
                         className={`${QUIET_BTN}${onEditClip ? ' col-span-2' : ''}`}
                     >
                         <Download size={16} className="text-muted group-hover:text-brass transition-colors shrink-0" />
-                        {downloadPct === null ? 'download' : `downloading ${downloadPct}%`}
+                        {downloadPct === null ? t('resultCard.downloadClip') : `downloading ${downloadPct}%`}
                     </button>
                 </div>
             </div>

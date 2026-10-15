@@ -4,6 +4,7 @@ import { apiFetch } from '../lib/api';
 import RemotionPreview from './RemotionPreview';
 import Modal from './ui/Modal';
 import SegmentedControl from './ui/SegmentedControl';
+import { useLanguage } from '../i18n';
 
 const FONT_OPTIONS = [
     { value: 'Anton', label: 'Anton' },
@@ -115,6 +116,7 @@ const swatchClass = (selected) =>
         : 'ring-1 ring-[color:var(--color-rule-2)] hover:ring-[color:var(--color-accent)]'}`;
 
 export default function SubtitleModal({ isOpen, onClose, onGenerate, onApplyAll, onRemove, isProcessing, videoUrl, jobId, clipIndex, existingHook, bulkCount = 0, bulkProgress }) {
+    const { t } = useLanguage();
     // Opens on the look the clip already has (the Default preset), so
     // "apply" without touching anything changes nothing.
     const [position, setPosition] = useState('bottom');
@@ -276,14 +278,14 @@ export default function SubtitleModal({ isOpen, onClose, onGenerate, onApplyAll,
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="xl" eyebrow="EDITOR · SUBTITLES" title="subtitles">
+        <Modal isOpen={isOpen} onClose={onClose} size="xl" eyebrow={t('subtitlesModal.eyebrow', 'EDITOR · SUBTÍTULOS')} title={t('subtitlesModal.title', 'subtitles')}>
             <div className="flex flex-col md:flex-row gap-6">
                 {/* Left: Preview */}
                 <div className="flex-1 flex flex-col items-center justify-center bg-black rounded-card border border-rule overflow-hidden relative aspect-[9/16] max-h-[600px]">
                     {captionsLoading ? (
                         <div className="flex items-center gap-2 text-muted">
                             <Loader2 size={16} className="animate-spin" />
-                            <span className="text-sm lowercase">Loading preview...</span>
+                            <span className="text-sm lowercase">{t('subtitlesModal.loadingPreview', 'Loading preview...')}</span>
                         </div>
                     ) : useRemotionPreview ? (
                         <RemotionPreview
@@ -568,7 +570,7 @@ export default function SubtitleModal({ isOpen, onClose, onGenerate, onApplyAll,
                                 <>
                                     <div className="flex gap-2">
                                         <button onClick={onClose} className="btn-ghost">
-                                            cancel
+                                            {t('common.cancel', 'cancel')}
                                         </button>
                                         <button
                                             onClick={() => onGenerate(styleOptions)}
@@ -576,7 +578,7 @@ export default function SubtitleModal({ isOpen, onClose, onGenerate, onApplyAll,
                                             className="btn-primary flex-1"
                                         >
                                             {(isProcessing && !bulkRunning) && <Loader2 size={16} className="animate-spin text-brassink" />}
-                                            {(isProcessing && !bulkRunning) ? 'generating...' : 'apply to this clip'}
+                                            {(isProcessing && !bulkRunning) ? t('subtitlesModal.generating', 'generating...') : t('subtitlesModal.saveAndApply', 'apply to this clip')}
                                         </button>
                                     </div>
                                     {onApplyAll && bulkCount > 1 && (
@@ -586,8 +588,8 @@ export default function SubtitleModal({ isOpen, onClose, onGenerate, onApplyAll,
                                             className="btn-ghost w-full flex items-center justify-center gap-2"
                                         >
                                             {bulkRunning
-                                                ? <><Loader2 size={16} className="animate-spin" />applying to all… {bulkProgress.current}/{bulkProgress.total}</>
-                                                : `apply this style to all ${bulkCount} clips`}
+                                                ? <><Loader2 size={16} className="animate-spin" />{t('subtitlesModal.applyingToAll', 'applying to all… {current}/{total}', { current: bulkProgress.current, total: bulkProgress.total })}</>
+                                                : t('subtitlesModal.applyToAll', `apply this style to all ${bulkCount} clips`, { count: bulkCount })}
                                         </button>
                                     )}
                                     {/* Clips ship captioned by default, so the way
@@ -599,7 +601,7 @@ export default function SubtitleModal({ isOpen, onClose, onGenerate, onApplyAll,
                                             disabled={isProcessing}
                                             className="text-xs text-muted underline underline-offset-2 lowercase hover:text-ink2 disabled:opacity-50"
                                         >
-                                            remove captions from this clip
+                                            {t('subtitlesModal.removeCaptions', 'remove captions from this clip')}
                                         </button>
                                     )}
                                 </>

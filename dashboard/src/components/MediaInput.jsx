@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link2, Upload, FileVideo, X, Info, Loader2, ChevronDown } from 'lucide-react';
+import { useLanguage } from '../i18n';
 import { track } from '../lib/analytics';
 import { getApiUrl } from '../config';
 
@@ -30,6 +31,7 @@ const readVideoDuration = (file) => new Promise((resolve) => {
 });
 
 export default function MediaInput({ onProcess, isProcessing }) {
+    const { t } = useLanguage();
     const [youtubeUrlEnabled, setYoutubeUrlEnabled] = useState(true);
     // File upload is the primary path; the link is secondary.
     const [mode, setMode] = useState('file'); // 'file' | 'url'
@@ -156,7 +158,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                         }`}
                 >
                     <Upload size={16} className={`hidden sm:block ${mode === 'file' ? 'text-brass' : ''}`} />
-                    Upload File
+                    {t('mediaInput.tabUpload')}
                 </button>
                 {youtubeUrlEnabled && (
                     <button
@@ -167,7 +169,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                             }`}
                     >
                         <Link2 size={16} className={`hidden sm:block ${mode === 'url' ? 'text-brass' : ''}`} />
-                        Video URL
+                        {t('mediaInput.tabUrl')}
                     </button>
                 )}
             </div>
@@ -180,7 +182,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                 type="url"
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
-                                placeholder="https://... paste a video link"
+                                placeholder={t('mediaInput.urlPlaceholder')}
                                 className="input-field pr-11"
                                 required
                             />
@@ -195,7 +197,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                 </button>
                                 {showInfo && (
                                     <div className="absolute right-0 top-full mt-2 w-64 z-20 card p-4 text-left animate-fade">
-                                        <p className="eyebrow mb-2">Paste a link from</p>
+                                        <p className="eyebrow mb-2">{t('mediaInput.pasteLinkFrom')}</p>
                                         <div className="flex flex-wrap gap-1.5">
                                             {SUPPORTED_PLATFORMS.map((p) => (
                                                 <span key={p} className="text-xs px-2 py-0.5 rounded-full bg-paper3 text-ink2">
@@ -204,7 +206,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                             ))}
                                         </div>
                                         <p className="text-xs text-muted mt-2.5 leading-relaxed">
-                                            …and 1,000+ more sites. If a link has a public video, we can usually fetch it.
+                                            {t('mediaInput.supportedSitesHint')}
                                         </p>
                                     </div>
                                 )}
@@ -234,8 +236,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                         ) : null}
                         {file && fileTooShort ? (
                             <p className="text-danger text-sm mt-3" role="alert">
-                                This video is {Math.round(fileSeconds)}s long. Clip generation needs at least {MIN_SOURCE_SECONDS}s
-                                of footage to cut from: it already is a short. Pick a longer video.
+                                {t('mediaInput.videoTooShort', null, { seconds: Math.round(fileSeconds), min: MIN_SOURCE_SECONDS })}
                             </p>
                         ) : null}
                         {!file && (
@@ -247,8 +248,8 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                     className="hidden"
                                 />
                                 <Upload className="mx-auto mb-3 text-muted" size={18} />
-                                <p className="text-ink2 lowercase">Click to upload or drag and drop</p>
-                                <p className="readout mt-2">MP4, MOV up to 500MB · at least {MIN_SOURCE_SECONDS}s long</p>
+                                <p className="text-ink2 lowercase">{t('mediaInput.dropzoneTitle')}</p>
+                                <p className="readout mt-2">{t('mediaInput.dropzoneHint')} · min {MIN_SOURCE_SECONDS}s</p>
                             </label>
                         )}
                     </div>
@@ -256,12 +257,12 @@ export default function MediaInput({ onProcess, isProcessing }) {
 
                 {/* Output format selector */}
                 <div className="mt-5" data-tutorial="output-format">
-                    <p className="eyebrow mb-2">Output format</p>
+                    <p className="eyebrow mb-2">{t('mediaInput.outputFormat')}</p>
                     <div className="grid grid-cols-3 gap-2">
                         {[
-                            { value: 'vertical', label: '9:16', hint: 'Shorts · Reels · TikTok', w: 18, h: 32 },
-                            { value: 'square', label: '1:1', hint: 'Feed posts', w: 28, h: 28 },
-                            { value: 'horizontal', label: '16:9', hint: 'Keep landscape · YouTube', w: 36, h: 20 },
+                            { value: 'vertical', label: t('mediaInput.formatVertical'), hint: t('mediaInput.formatVerticalHint'), w: 18, h: 32 },
+                            { value: 'square', label: t('mediaInput.formatSquare'), hint: t('mediaInput.formatSquareHint'), w: 28, h: 28 },
+                            { value: 'horizontal', label: t('mediaInput.formatHorizontal'), hint: t('mediaInput.formatHorizontalHint'), w: 36, h: 20 },
                         ].map((f) => {
                             const active = outputFormat === f.value;
                             return (
@@ -298,7 +299,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                         className="flex items-center gap-1.5 text-xs text-muted hover:text-ink2 lowercase transition-colors"
                     >
                         <ChevronDown size={14} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
-                        advanced options
+                        {t('mediaInput.advancedOptions')}
                         {(targetClips || clipMinSeconds || clipMaxSeconds || !autoHook) && (
                             <span className="text-brass">·</span>
                         )}
@@ -308,17 +309,17 @@ export default function MediaInput({ onProcess, isProcessing }) {
                            ~100px each, which crushes both label and value. */
                         <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2 animate-fade">
                             <div>
-                                <p className="eyebrow mb-1.5">clips to aim for</p>
+                                <p className="eyebrow mb-1.5">{t('mediaInput.clipsToAimFor')}</p>
                                 <input
                                     type="number" min="1" max="15" step="1"
                                     value={targetClips}
                                     onChange={(e) => setTargetClips(e.target.value)}
-                                    placeholder="auto"
+                                    placeholder={t('mediaInput.clipsAuto')}
                                     className="input-field"
                                 />
                             </div>
                             <div>
-                                <p className="eyebrow mb-1.5">min length (s)</p>
+                                <p className="eyebrow mb-1.5">{t('mediaInput.minLength')}</p>
                                 <input
                                     type="number" min="5" max="175" step="1"
                                     value={clipMinSeconds}
@@ -328,7 +329,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                 />
                             </div>
                             <div>
-                                <p className="eyebrow mb-1.5">max length (s)</p>
+                                <p className="eyebrow mb-1.5">{t('mediaInput.maxLength')}</p>
                                 <input
                                     type="number" min="10" max="180" step="1"
                                     value={clipMaxSeconds}
@@ -338,21 +339,20 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                 />
                             </div>
                             <p className="col-span-1 sm:col-span-3 text-[11px] leading-relaxed text-muted">
-                                Targets, not guarantees: the AI returns fewer clips when the
-                                material doesn't hold them. Leave blank to let it decide.
+                                {t('mediaInput.targetsHint')}
                             </p>
                             <div className="col-span-1 sm:col-span-3 flex flex-wrap items-center justify-between gap-3 pt-3 sm:pt-1 border-t border-rule">
-                                <span className="text-xs text-ink2">vertical layout</span>
+                                <span className="text-xs text-ink2">{t('mediaInput.verticalLayout')}</span>
                                 <select
                                     value={layout}
                                     onChange={(e) => setLayout(e.target.value)}
                                     className="input-field !w-auto text-xs py-1.5"
                                     aria-label="vertical layout"
                                 >
-                                    <option value="auto">Auto (AI picks per video)</option>
-                                    <option value="split">Two speakers stacked</option>
-                                    <option value="screencast">Screen over presenter</option>
-                                    <option value="none">Single crop only</option>
+                                    <option value="auto">{t('mediaInput.layoutAutoOpt')}</option>
+                                    <option value="split">{t('mediaInput.layoutSplitOpt')}</option>
+                                    <option value="screencast">{t('mediaInput.layoutScreencastOpt')}</option>
+                                    <option value="none">{t('mediaInput.layoutNoneOpt')}</option>
                                 </select>
                             </div>
                             <div className="col-span-1 sm:col-span-3 flex flex-wrap items-center justify-between gap-3 pt-3 sm:pt-1 border-t border-rule">
@@ -363,7 +363,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                         onChange={(e) => setAutoHook(e.target.checked)}
                                         className="w-4 h-4 shrink-0 accent-[var(--color-accent)] cursor-pointer"
                                     />
-                                    auto hook titles on clips
+                                    {t('mediaInput.autoHookCheck')}
                                 </label>
                                 {autoHook && (
                                     <select
@@ -382,8 +382,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                 )}
                                 {autoHook && (
                                     <p className="w-full text-[11px] leading-relaxed text-muted">
-                                        You can change each clip&apos;s hook text, style, position and size
-                                        afterwards with its hook button.
+                                        {t('mediaInput.autoHookHint')}
                                     </p>
                                 )}
                             </div>
@@ -399,7 +398,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                         className="mt-0.5 w-4 h-4 shrink-0 accent-[var(--color-accent)] cursor-pointer"
                     />
                     <span>
-                        I confirm I own this content or have the rights to process it. I am responsible for any content I submit. See our <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-ink2 underline underline-offset-2 hover:text-brass transition-colors" onClick={(e) => e.stopPropagation()}>Terms</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-ink2 underline underline-offset-2 hover:text-brass transition-colors" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>.
+                        {t('mediaInput.rightsConfirm')} <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-ink2 underline underline-offset-2 hover:text-brass transition-colors" onClick={(e) => e.stopPropagation()}>{t('mediaInput.rightsTerms')}</a> {t('mediaInput.rightsAnd')} <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-ink2 underline underline-offset-2 hover:text-brass transition-colors" onClick={(e) => e.stopPropagation()}>{t('mediaInput.rightsPrivacy')}</a>.
                     </span>
                 </label>
 
@@ -412,11 +411,11 @@ export default function MediaInput({ onProcess, isProcessing }) {
                     {isProcessing ? (
                         <>
                             <Loader2 size={16} className="animate-spin" />
-                            Processing Video...
+                            {t('mediaInput.btnSubmitting')}
                         </>
                     ) : (
                         <>
-                            Generate Clips
+                            {t('mediaInput.btnSubmit')}
                         </>
                     )}
                 </button>

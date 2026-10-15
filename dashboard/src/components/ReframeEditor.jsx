@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, Loader2, Crosshair, RotateCcw, AlertCircle, Play, Pause, Columns2 } from 'lucide-react';
 import { getApiUrl } from '../config';
 import { apiJson } from '../lib/api';
+import { useLanguage } from '../i18n';
 
 // Manual reframing: the automatic crop is right most of the time and grossly
 // wrong occasionally, and until now there was no way to say "frame it here".
@@ -24,6 +25,7 @@ const fmt = (s) => {
 };
 
 export default function ReframeEditor({ jobId, clipIndex, clipTitle, onClose, onReframed }) {
+    const { t } = useLanguage();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
@@ -145,7 +147,7 @@ export default function ReframeEditor({ jobId, clipIndex, clipTitle, onClose, on
                     <div className="flex items-center gap-2.5 min-w-0">
                         <Crosshair size={18} className="text-brass shrink-0" />
                         <div className="min-w-0">
-                            <h2 className="text-base font-medium text-ink lowercase truncate">reframing</h2>
+                            <h2 className="text-base font-medium text-ink lowercase truncate">{t('reframeModal.title', 'reframing')}</h2>
                             {clipTitle && <p className="text-xs text-muted truncate">{clipTitle}</p>}
                         </div>
                     </div>
@@ -156,15 +158,13 @@ export default function ReframeEditor({ jobId, clipIndex, clipTitle, onClose, on
 
                 <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar p-4 space-y-5">
                     <p className="text-xs text-muted leading-relaxed">
-                        Play a scene to hear who is talking, then drag the rectangle over
-                        the person you want. Each scene is one camera. Scenes you leave
-                        alone keep the automatic camera.
+                        {t('reframeModal.desc', 'Play a scene to hear who is talking, then drag the rectangle over the person you want.')}
                     </p>
 
                     {loading && (
                         <div className="flex items-center gap-2 text-sm text-muted py-8 justify-center">
                             <Loader2 size={18} className="animate-spin text-brass" />
-                            reading the scenes…
+                            {t('reframeModal.loadingScenes', 'reading the scenes…')}
                         </div>
                     )}
 
@@ -189,6 +189,7 @@ export default function ReframeEditor({ jobId, clipIndex, clipTitle, onClose, on
                             onMoveHalf={(which, f) => setSplitHalf(scene.index, which, f)}
                             onToggleSplit={() => toggleSplit(scene.index, scene)}
                             onReset={() => resetScene(scene.index)}
+                            t={t}
                         />
                     ))}
                 </div>
@@ -196,18 +197,18 @@ export default function ReframeEditor({ jobId, clipIndex, clipTitle, onClose, on
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-t border-rule">
                     <span className="text-xs text-muted">
                         {adjusted === 0
-                            ? 'nothing adjusted yet'
-                            : `${adjusted} scene${adjusted > 1 ? 's' : ''} reframed by hand`}
+                            ? t('reframeModal.nothingAdjusted', 'nothing adjusted yet')
+                            : t('reframeModal.adjustedCount', `${adjusted} scene(s) reframed by hand`, { count: adjusted })}
                     </span>
                     <div className="flex items-center gap-2 [&>button]:flex-1 sm:[&>button]:flex-none">
-                        <button onClick={onClose} className="btn-quiet py-2 px-4 text-sm">cancel</button>
+                        <button onClick={onClose} className="btn-quiet py-2 px-4 text-sm">{t('common.cancel', 'cancel')}</button>
                         <button
                             onClick={handleSave}
                             disabled={!adjusted || saving}
                             className="btn-primary py-2 px-4 text-sm disabled:opacity-40"
                         >
                             {saving ? <Loader2 size={16} className="animate-spin" /> : null}
-                            {saving ? 're-rendering…' : 'apply reframing'}
+                            {saving ? t('reframeModal.rendering', 're-rendering…') : t('reframeModal.apply', 'apply reframing')}
                         </button>
                     </div>
                 </div>
@@ -222,7 +223,7 @@ export default function ReframeEditor({ jobId, clipIndex, clipTitle, onClose, on
 // seeked to this scene, so the rectangle can be judged against moving pictures
 // and sound rather than a single still.
 function SceneRow({ scene, value, widthFraction, previewUrl, touched, playing,
-                    onPlayToggle, onMoveSingle, onMoveHalf, onToggleSplit, onReset }) {
+                    onPlayToggle, onMoveSingle, onMoveHalf, onToggleSplit, onReset, t }) {
     const boxRef = useRef(null);
     const videoRef = useRef(null);
     const [dragging, setDragging] = useState(null);   // null | 'single' | 'top' | 'bottom'
@@ -318,14 +319,14 @@ function SceneRow({ scene, value, widthFraction, previewUrl, touched, playing,
                             isSplit ? 'text-brass' : 'text-muted hover:text-ink2'}`}
                         title="stack two regions instead of one window"
                     >
-                        <Columns2 size={12} /> split
+                        <Columns2 size={12} /> {t ? t('reframeModal.split', 'split') : 'split'}
                     </button>
                     {touched ? (
                         <button onClick={onReset} className="flex items-center gap-1 text-brass hover:underline">
-                            <RotateCcw size={12} /> automatic
+                            <RotateCcw size={12} /> {t ? t('reframeModal.automatic', 'automatic') : 'automatic'}
                         </button>
                     ) : (
-                        <span className="text-muted">automatic</span>
+                        <span className="text-muted">{t ? t('reframeModal.automatic', 'automatic') : 'automatic'}</span>
                     )}
                 </div>
             </div>

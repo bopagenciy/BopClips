@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Upload, Sparkles, Youtube, Instagram, Share2, ChevronDown, Check, Activity, LayoutDashboard, Settings, Plus, History, X, Terminal, Shield, LayoutGrid, Image, Globe, RotateCcw, Calendar, AlertTriangle, KeyRound, Bot, Users, Smartphone, ExternalLink, Copy, CheckCircle2, Mail, Loader2, Download, Menu, Lock, Rocket } from 'lucide-react';
+import { useLanguage, LanguageSelector } from './i18n';
 import KeyInput from './components/KeyInput';
 import MediaInput from './components/MediaInput';
 import McpConnectCard from './components/McpConnectCard';
@@ -268,6 +269,7 @@ const pollJob = async (jobId) => {
 };
 
 function App() {
+  const { t } = useLanguage();
   // Cloud auth/billing session (inert when billing is disabled).
   const { billingEnabled, isManaged, isSignedIn, me, plan, refreshMe, jobRetentionSeconds, localLlm } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
@@ -1217,15 +1219,15 @@ function App() {
   // drawer, and the bottom tab bar. `short` is the tab-bar label — the full one
   // wraps to two lines in a 5-up bar on a 360px phone.
   const navItems = [
-    { id: 'dashboard', ord: '01', icon: LayoutDashboard, label: 'Clip Generator', short: 'clips', primary: true },
+    { id: 'dashboard', ord: '01', icon: LayoutDashboard, label: t('nav.clips'), short: 'clips', primary: true },
     // Cloud only: it runs on the managed pipeline and the Upload-Post connection.
-    ...(billingEnabled ? [{ id: 'autopilot', ord: '02', icon: Rocket, label: 'Autopilot', short: 'autopilot', isNew: true }] : []),
-    { id: 'saasshorts', ord: '03', icon: Sparkles, label: 'AI Shorts', short: 'ai shorts', byok: true, primary: true },
-    { id: 'ai-agent', ord: '04', icon: Bot, label: 'AI Agent', short: 'agent', byok: true },
-    { id: 'ugc-gallery', ord: '05', icon: LayoutGrid, label: 'UGC Gallery', short: 'gallery', primary: true },
-    { id: 'thumbnails', ord: '06', icon: Image, label: 'YouTube Studio', short: 'studio', primary: true },
-    ...(billingEnabled && isSignedIn ? [{ id: 'history', ord: '07', icon: History, label: 'History', short: 'history' }] : []),
-    { id: 'settings', ord: '08', icon: Settings, label: 'Settings', short: 'settings' },
+    ...(billingEnabled ? [{ id: 'autopilot', ord: '02', icon: Rocket, label: t('nav.autopilot'), short: 'autopilot', isNew: true }] : []),
+    { id: 'saasshorts', ord: '03', icon: Sparkles, label: t('nav.aiShorts'), short: 'ai shorts', byok: true, primary: true },
+    { id: 'ai-agent', ord: '04', icon: Bot, label: t('nav.aiAgent'), short: 'agent', byok: true },
+    { id: 'ugc-gallery', ord: '05', icon: LayoutGrid, label: t('nav.ugcGallery'), short: 'gallery', primary: true },
+    { id: 'thumbnails', ord: '06', icon: Image, label: t('nav.studio'), short: 'studio', primary: true },
+    ...(billingEnabled && isSignedIn ? [{ id: 'history', ord: '07', icon: History, label: t('nav.history'), short: 'history' }] : []),
+    { id: 'settings', ord: '08', icon: Settings, label: t('nav.settings'), short: 'settings' },
   ];
   const activeNav = navItems.find((n) => n.id === activeTab);
 
@@ -1254,16 +1256,17 @@ function App() {
         className="flex items-center gap-2 px-3 py-2 text-xs lowercase text-muted hover:text-ink2 transition-colors"
       >
         <Globe size={14} className="shrink-0" />
-        <span className={collapsed ? 'hidden lg:block truncate' : 'truncate'}>landing page</span>
+        <span className={collapsed ? 'hidden lg:block truncate' : 'truncate'}>{t('landing.navLaunchApp')}</span>
       </a>
       <a
         href="https://github.com/mutonby/openshorts"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2 px-3 py-2 text-xs lowercase text-muted hover:text-ink2 transition-colors"
+        title="OpenShorts upstream project (MIT License)"
       >
         <svg height="14" viewBox="0 0 16 16" version="1.1" width="14" aria-hidden="true" fill="currentColor" className="shrink-0"><path fillRule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-        <span className={collapsed ? 'hidden lg:block truncate' : 'truncate'}>open source</span>
+        <span className={collapsed ? 'hidden lg:block truncate' : 'truncate'}>open source (mit)</span>
       </a>
       {billingEnabled && (
         <a
@@ -1274,13 +1277,6 @@ function App() {
           <span className={collapsed ? 'hidden lg:block truncate' : 'truncate'}>plans &amp; pricing</span>
         </a>
       )}
-      <a
-        href="mailto:info@openshorts.app"
-        className="flex items-center gap-2 px-3 py-2 text-xs lowercase text-muted hover:text-ink2 transition-colors"
-      >
-        <Mail size={14} className="shrink-0" />
-        <span className={collapsed ? 'hidden lg:block truncate' : 'truncate'}>info@openshorts.app</span>
-      </a>
     </>
   );
 
@@ -1288,11 +1284,11 @@ function App() {
   // entirely — an unlabelled 80px rail ate a fifth of a phone screen.
   const Sidebar = () => (
     <div className="hidden md:flex w-20 lg:w-64 bg-paper2 border-r border-rule flex-col h-full shrink-0 transition-all duration-300">
-      <a href="#landing" className="p-6 flex items-center gap-3" title="go to landing page">
-        <div className="w-8 h-8 bg-paper3 rounded-input flex items-center justify-center shrink-0 overflow-hidden border border-rule">
-          <img src="/logo-openshorts.png" alt="Logo" className="w-full h-full object-cover" />
+      <a href="#landing" className="p-6 flex items-center gap-3" title={t('nav.goToLanding')}>
+        <div className="w-8 h-8 bg-paper3 rounded-input flex items-center justify-center shrink-0 overflow-hidden border border-rule p-0.5">
+          <img src="/logo-bopclips-icon.png" alt="Bop Clips" className="w-full h-full object-contain" />
         </div>
-        <span className="font-display lowercase text-lg text-ink hidden lg:block">openshorts</span>
+        <span className="font-display lowercase text-lg text-ink hidden lg:block tracking-tight">bop clips</span>
       </a>
 
       <nav className="flex-1 px-4 py-4 space-y-1">
@@ -1304,7 +1300,7 @@ function App() {
               key={item.id}
               data-tutorial={item.id === 'dashboard' ? 'nav-clips' : undefined}
               onClick={() => goToTab(item.id)}
-              title={tabLocked(item.id) ? 'Finish your first clips to unlock' : item.label}
+              title={tabLocked(item.id) ? t('nav.finishFirst') : item.label}
               disabled={tabLocked(item.id)}
               className={`relative w-full flex items-center gap-3 px-3 py-2.5 rounded-input transition-colors ${isActive ? 'bg-paper3 text-ink' : 'text-muted hover:text-ink2 hover:bg-paper3/50'} ${tabLocked(item.id) ? 'opacity-40 cursor-not-allowed hover:bg-transparent hover:text-muted' : ''}`}
             >
@@ -1316,14 +1312,18 @@ function App() {
               {tabLocked(item.id)
                 ? <Lock size={12} className="shrink-0 hidden lg:block" />
                 : item.byok ? <span className="readout hidden lg:block">BYOK</span>
-                  : item.isNew ? <span className="badge-brass hidden lg:block">new</span> : null}
+                  : item.isNew ? <span className="badge-brass hidden lg:block">{t('nav.new')}</span> : null}
               <span className="readout hidden lg:block">{item.ord}</span>
             </button>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-rule space-y-1">
+      <div className="p-4 border-t border-rule space-y-2">
+        <div className="hidden lg:flex items-center justify-between px-3 py-1">
+          <span className="text-xs text-muted font-mono">{t('language.switchTitle')}:</span>
+          <LanguageSelector compact />
+        </div>
         <NavFooterLinks collapsed />
       </div>
     </div>
@@ -1345,14 +1345,14 @@ function App() {
       <div className="relative w-[17rem] max-w-[82vw] h-full bg-paper2 border-r border-rule flex flex-col animate-slide-in-left">
         <div className="flex items-center justify-between px-5 h-14 border-b border-rule shrink-0">
           <a href="#landing" className="flex items-center gap-2.5" onClick={() => setNavOpen(false)}>
-            <div className="w-7 h-7 bg-paper3 rounded-input overflow-hidden border border-rule shrink-0">
-              <img src="/logo-openshorts.png" alt="" className="w-full h-full object-cover" />
+            <div className="w-7 h-7 bg-paper3 rounded-input overflow-hidden border border-rule shrink-0 flex items-center justify-center p-0.5">
+              <img src="/logo-bopclips-icon.png" alt="Bop Clips" className="w-full h-full object-contain" />
             </div>
-            <span className="font-display lowercase text-lg text-ink">openshorts</span>
+            <span className="font-display lowercase text-lg text-ink tracking-tight">bop clips</span>
           </a>
           <button
             onClick={() => setNavOpen(false)}
-            aria-label="close navigation"
+            aria-label={t('nav.closeNav')}
             className="p-2 -mr-2 text-muted hover:text-ink transition-colors"
           >
             <X size={18} />
@@ -1369,7 +1369,7 @@ function App() {
                 onClick={() => goToTab(item.id)}
                 disabled={tabLocked(item.id)}
                 aria-current={isActive ? 'page' : undefined}
-                title={tabLocked(item.id) ? 'Finish your first clips to unlock' : undefined}
+                title={tabLocked(item.id) ? t('nav.finishFirst') : undefined}
                 className={`relative w-full flex items-center gap-3 px-3 py-3 rounded-input transition-colors ${isActive ? 'bg-paper3 text-ink' : 'text-muted active:bg-paper3/60'} ${tabLocked(item.id) ? 'opacity-40 cursor-not-allowed' : ''}`}
               >
                 {isActive && (
@@ -1380,11 +1380,16 @@ function App() {
                 {tabLocked(item.id)
                   ? <Lock size={12} className="shrink-0" />
                   : item.byok ? <span className="readout shrink-0">BYOK</span>
-                    : item.isNew ? <span className="badge-brass shrink-0">new</span> : null}
+                    : item.isNew ? <span className="badge-brass shrink-0">{t('nav.new')}</span> : null}
               </button>
             );
           })}
         </nav>
+
+        <div className="px-4 py-3 border-t border-rule flex items-center justify-between shrink-0">
+          <span className="text-xs text-muted font-mono">{t('language.switchTitle')}:</span>
+          <LanguageSelector compact />
+        </div>
 
         <div className="px-3 py-3 border-t border-rule space-y-0.5 safe-bottom shrink-0">
           <NavFooterLinks />
@@ -1450,27 +1455,30 @@ function App() {
                 used to carry. Without it a phone has no "where am I". */}
             <button
               onClick={() => setNavOpen(true)}
-              aria-label="open navigation"
+              aria-label={t('nav.openNav')}
               className="md:hidden -ml-1 p-2 rounded-input text-muted active:bg-paper3 transition-colors shrink-0"
             >
               <Menu size={20} />
             </button>
             <span data-tutorial="nav-clips" className="md:hidden font-display lowercase text-base text-ink truncate">
-              {activeNav?.label || 'openshorts'}
+              {activeNav?.label || 'Bop Clips'}
             </span>
             {status !== 'idle' && (
               <button
                 onClick={handleReset}
                 className="btn-quiet px-3 py-1.5 text-xs shrink-0"
-                aria-label="New Project"
+                aria-label={t('header.newProject')}
               >
                 <Plus size={14} />
-                <span className="hidden sm:inline">New Project</span>
+                <span className="hidden sm:inline">{t('header.newProject')}</span>
               </button>
             )}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Language Selector ES / EN */}
+            <LanguageSelector compact />
+
             {userProfiles.length > 0 && (
               <UserProfileSelector
                 profiles={userProfiles}
@@ -1492,13 +1500,13 @@ function App() {
             {billingEnabled && isSignedIn && !isManaged && (
               <button onClick={() => setShowPlanChoice(true)}
                 className="btn-primary px-4 py-2 text-xs">
-                Choose a plan
+                {t('header.choosePlan')}
               </button>
             )}
             {billingEnabled && !isSignedIn && (
               <button onClick={() => setShowLogin(true)}
                 className="btn-ghost px-4 py-2 text-xs">
-                Sign in
+                {t('header.signIn')}
               </button>
             )}
             {billingEnabled && isSignedIn && <ProfileMenu onUpgrade={isManaged ? openUpsell : null} />}
@@ -1509,17 +1517,17 @@ function App() {
               <button
                 onClick={() => (billingEnabled && !isSignedIn ? setShowLogin(true) : goToTab('settings'))}
                 className="badge-warn hover:brightness-125 transition-all hidden sm:inline-flex"
-                title="Configure API keys or choose a plan"
+                title={t('header.keysMissingTitle')}
               >
                 <AlertTriangle size={12} />
                 <span className="hidden md:inline">
                   {!geminiOk && !uploadPostKey
-                    ? 'Gemini & Upload-Post keys missing'
+                    ? t('header.geminiAndUploadMissing')
                     : !geminiOk
-                      ? 'Gemini API Key Missing'
-                      : 'Upload-Post API Key Missing'}
+                      ? t('header.geminiMissing')
+                      : t('header.uploadMissing')}
                 </span>
-                <span className="md:hidden">keys missing</span>
+                <span className="md:hidden">{t('header.keysMissing')}</span>
               </button>
             )}
           </div>
@@ -1531,13 +1539,9 @@ function App() {
             <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 text-sm text-ink2 min-w-0 flex-1">
               <KeyRound size={16} className="shrink-0 text-warn mt-0.5 sm:mt-0" />
               <div className="min-w-0">
-                <span className="font-medium text-ink">Required API keys missing.</span>{' '}
+                <span className="font-medium text-ink">{t('missingKeysBanner.title')}</span>{' '}
                 <span className="text-muted">
-                  {!geminiOk && !uploadPostKey
-                    ? 'Set your Gemini and Upload-Post API keys to use OpenShorts.'
-                    : !geminiOk
-                      ? 'Set your Gemini API key to use OpenShorts.'
-                      : 'Set your Upload-Post API key to use OpenShorts.'}
+                  {t('missingKeysBanner.desc')}
                 </span>
               </div>
             </div>
@@ -1545,7 +1549,7 @@ function App() {
               onClick={() => goToTab('settings')}
               className="btn-quiet px-3 py-1.5 text-xs shrink-0 w-full sm:w-auto"
             >
-              Go to Settings
+              {t('missingKeysBanner.action')}
             </button>
           </div>
         )}
@@ -1582,11 +1586,11 @@ function App() {
             <div className="h-full overflow-y-auto p-4 sm:p-8 max-w-2xl mx-auto animate-fade">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
                 <div>
-                  <p className="eyebrow mb-1.5">08 · SETTINGS</p>
-                  <h1 className="font-display lowercase text-2xl text-ink">Settings</h1>
+                  <p className="eyebrow mb-1.5">{t('settingsTab.eyebrow')}</p>
+                  <h1 className="font-display lowercase text-2xl text-ink">{t('settingsTab.title')}</h1>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted mt-1">
-                  <Shield size={12} className="text-ok shrink-0" /> Privacy: keys only live in your browser (sent to backend just to process)
+                  <Shield size={12} className="text-ok shrink-0" /> {t('settingsTab.privacyNotice')}
                 </div>
               </div>
               {/* Self-hosted installs have no account page, so the agent
@@ -1645,16 +1649,15 @@ function App() {
                     <div className="w-9 h-9 rounded-input bg-paper3 flex items-center justify-center shrink-0">
                       <Share2 size={16} className="text-brass" />
                     </div>
-                    <h2 className="text-base font-medium text-ink lowercase">Social Integration</h2>
+                    <h2 className="text-base font-medium text-ink lowercase">{t('settingsTab.socialIntegration')}</h2>
                   </div>
-                  <span className="badge-warn">Required</span>
+                  <span className="badge-warn">{t('settingsTab.requiredBadge')}</span>
                 </div>
                 <p className="text-xs text-muted mb-6 leading-relaxed">
-                  Required to publish your clips to TikTok, Instagram Reels, and YouTube Shorts via <strong>Upload-Post</strong>.
-                  Includes a <strong>free tier</strong> (no credit card required).
+                  {t('settingsTab.socialDesc')}
                 </p>
                 <div className="space-y-4">
-                  <label className="block text-sm text-muted">Upload-Post API Key</label>
+                  <label className="block text-sm text-muted">{t('settingsTab.uploadPostTitle')}</label>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="password"
@@ -1664,28 +1667,28 @@ function App() {
                       placeholder="ey..."
                     />
                     <button onClick={fetchUserProfiles} className="btn-quiet py-2 px-4 text-sm">
-                      Connect
+                      {t('settingsTab.connectBtn')}
                     </button>
                   </div>
                   <div className="text-xs text-muted leading-relaxed">
-                    Connect your Upload-Post account to enable one-click publishing.
+                    {t('settingsTab.uploadPostHelp')}
                     <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <a href="https://app.upload-post.com/login" target="_blank" rel="noopener noreferrer" className="p-2 border border-rule rounded-input hover:bg-paper3 transition-colors flex flex-col gap-1">
-                        <span className="text-ink2 font-medium">1. Login</span>
-                        <span className="text-xs text-muted">Register account</span>
+                        <span className="text-ink2 font-medium">{t('settingsTab.socialLogin')}</span>
+                        <span className="text-xs text-muted">{t('settingsTab.socialRegister')}</span>
                       </a>
                       <a href="https://app.upload-post.com/manage-users" target="_blank" rel="noopener noreferrer" className="p-2 border border-rule rounded-input hover:bg-paper3 transition-colors flex flex-col gap-1">
-                        <span className="text-ink2 font-medium">2. Profiles</span>
-                        <span className="text-xs text-muted">Create & Connect</span>
+                        <span className="text-ink2 font-medium">{t('settingsTab.socialProfiles')}</span>
+                        <span className="text-xs text-muted">{t('settingsTab.socialProfilesDesc')}</span>
                       </a>
                       <a href="https://app.upload-post.com/api-keys" target="_blank" rel="noopener noreferrer" className="p-2 border border-rule rounded-input hover:bg-paper3 transition-colors flex flex-col gap-1">
-                        <span className="text-ink2 font-medium">3. API Key</span>
-                        <span className="text-xs text-muted">Generate key</span>
+                        <span className="text-ink2 font-medium">{t('settingsTab.socialKey')}</span>
+                        <span className="text-xs text-muted">{t('settingsTab.socialKeyDesc')}</span>
                       </a>
                     </div>
                     <br />
                     <span className="text-muted">
-                      Keys are only stored in your browser. They are sent to the backend only to process your request, never stored server-side.
+                      {t('settingsTab.keysPrivacyNote')}
                     </span>
                   </div>
                 </div>
@@ -1700,16 +1703,15 @@ function App() {
                     <div className="w-9 h-9 rounded-input bg-paper3 flex items-center justify-center shrink-0">
                       <Globe size={16} className="text-brass" />
                     </div>
-                    <h2 className="text-base font-medium text-ink lowercase">Video Translation</h2>
+                    <h2 className="text-base font-medium text-ink lowercase">{t('settingsTab.videoTranslation')}</h2>
                   </div>
                   <span className="readout">BYOK</span>
                 </div>
                 <p className="text-xs text-muted mb-6 leading-relaxed">
-                  For <strong>AI Shorts &amp; dubbing</strong> — bring your own key. Translate your clips to different
-                  languages using <strong>ElevenLabs</strong> AI dubbing (billed by ElevenLabs). Not covered by your plan.
+                  {t('settingsTab.videoTranslationDesc')}
                 </p>
                 <div className="space-y-4">
-                  <label className="block text-sm text-muted">ElevenLabs API Key</label>
+                  <label className="block text-sm text-muted">{t('settingsTab.elevenLabsTitle')}</label>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="password"
@@ -1728,24 +1730,24 @@ function App() {
                       }}
                       className={elevenLabsSaved ? 'badge-ok px-4' : 'btn-quiet py-2 px-4 text-sm'}
                     >
-                      {elevenLabsSaved ? <><Check size={12} /> saved</> : 'Save'}
+                      {elevenLabsSaved ? <><Check size={12} /> {t('settingsTab.savedBadge')}</> : t('settingsTab.saveBtn')}
                     </button>
                   </div>
                   <div className="text-xs text-muted leading-relaxed">
-                    Get your API key from ElevenLabs to enable video translation.
+                    {t('settingsTab.elevenLabsGet')}
                     <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <a href="https://elevenlabs.io/sign-up" target="_blank" rel="noopener noreferrer" className="p-2 border border-rule rounded-input hover:bg-paper3 transition-colors flex flex-col gap-1">
-                        <span className="text-ink2 font-medium">1. Sign Up</span>
-                        <span className="text-xs text-muted">Create account</span>
+                        <span className="text-ink2 font-medium">{t('settingsTab.elevenSignUp')}</span>
+                        <span className="text-xs text-muted">{t('settingsTab.elevenSignUpDesc')}</span>
                       </a>
                       <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="p-2 border border-rule rounded-input hover:bg-paper3 transition-colors flex flex-col gap-1">
-                        <span className="text-ink2 font-medium">2. API Key</span>
-                        <span className="text-xs text-muted">Generate key</span>
+                        <span className="text-ink2 font-medium">{t('settingsTab.elevenKey')}</span>
+                        <span className="text-xs text-muted">{t('settingsTab.elevenKeyDesc')}</span>
                       </a>
                     </div>
                     <br />
                     <span className="text-muted">
-                      Keys are only stored in your browser. They are sent to the backend only to process your request, never stored server-side.
+                      {t('settingsTab.keysPrivacyNote')}
                     </span>
                   </div>
                 </div>
@@ -2004,24 +2006,24 @@ function App() {
                   eyebrow, the display size and the gaps all shrink first. */}
               <div className="max-w-xl w-full text-center space-y-5 sm:space-y-8">
                 <div className="space-y-2.5 sm:space-y-4">
-                  <p className="eyebrow hidden sm:block">01 · CLIP GENERATOR</p>
+                  <p className="eyebrow hidden sm:block">{t('generator.eyebrow')}</p>
                   <h1 className="font-display lowercase text-3xl sm:text-4xl md:text-5xl text-ink">
-                    Create Viral Shorts
+                    {t('generator.title')}
                   </h1>
                   <p className="text-muted text-[15px] sm:text-lg leading-snug sm:leading-normal max-w-sm sm:max-w-none mx-auto">
-                    Drop your long-form video below to instantly generate viral clips with AI.
+                    {t('generator.subtitle')}
                   </p>
                   {/* The same pipeline is an MCP server: point people at the
                       one place that explains how to drive it from an agent. */}
                   {!tutorialLock && (
                   <p className="text-xs text-muted">
-                    Or let an agent do it:{' '}
+                    {t('generator.agentText')}{' '}
                     <a
                       href={billingEnabled ? '#/account' : '#app'}
                       onClick={(e) => { if (!billingEnabled) { e.preventDefault(); goToTab('settings'); } }}
                       className="text-ink2 underline underline-offset-2 hover:text-brass transition-colors"
                     >
-                      connect Claude, ChatGPT or n8n →
+                      {t('generator.agentLink')}
                     </a>
                   </p>
                   )}
@@ -2354,51 +2356,51 @@ function App() {
       <Modal
         isOpen={showKeyModal}
         onClose={() => setShowKeyModal(false)}
-        eyebrow="SETUP"
+        eyebrow={t('keyModal.eyebrow')}
         title={!geminiOk && !uploadPostKey
-          ? 'Required API Keys Missing'
+          ? t('keyModal.titleBoth')
           : !geminiOk
-            ? 'Gemini API Key Required'
-            : 'Upload-Post API Key Required'}
+            ? t('keyModal.titleGemini')
+            : t('keyModal.titleUpload')}
         footer={
           <div className="flex gap-3">
             <button
               onClick={() => setShowKeyModal(false)}
               className="btn-ghost flex-1 px-4 py-2 text-sm"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={() => { setShowKeyModal(false); goToTab('settings'); }}
               className="btn-primary flex-1 px-4 py-2 text-sm"
             >
-              Go to Settings
+              {t('keyModal.goToSettings')}
             </button>
           </div>
         }
       >
         <div className="space-y-4">
           <p className="text-sm text-muted">
-            OpenShorts needs both a <strong className="text-ink2">Gemini</strong> API key and an <strong className="text-ink2">Upload-Post</strong> API key. Both have free tiers.
+            {t('keyModal.desc')}
           </p>
 
           {/* Gemini block */}
           <div className={`rounded-input p-4 space-y-2 border ${!apiKey ? 'border-rule2' : 'border-rule opacity-70'}`}>
             <p className="text-xs font-medium text-ink flex items-center gap-2">
               {apiKey ? <Check size={12} className="text-ok" /> : <AlertTriangle size={12} className="text-warn" />}
-              Gemini API Key {apiKey && <span className="text-ok">— set</span>}
+              {t('keyModal.geminiTitle')} {apiKey && <span className="text-ok">{t('keyModal.geminiSet')}</span>}
             </p>
             {!apiKey && (
               <>
                 <ol className="text-xs text-muted space-y-1 list-decimal list-inside">
-                  <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-brass underline">aistudio.google.com/app/apikey</a></li>
-                  <li>Sign in with your Google account</li>
-                  <li>Click "Create API Key"</li>
-                  <li>Copy the key and paste it below</li>
+                  <li>{t('keyModal.geminiStep1')} (<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-brass underline">aistudio.google.com</a>)</li>
+                  <li>{t('keyModal.geminiStep2')}</li>
+                  <li>{t('keyModal.geminiStep3')}</li>
+                  <li>{t('keyModal.geminiStep4')}</li>
                 </ol>
                 <input
                   type="text"
-                  placeholder="Paste your Gemini API key here..."
+                  placeholder={t('keyModal.geminiPlaceholder')}
                   className="input-field"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && e.target.value.trim()) {
@@ -2414,22 +2416,22 @@ function App() {
           <div className={`rounded-input p-4 space-y-2 border ${!uploadPostKey ? 'border-rule2' : 'border-rule opacity-70'}`}>
             <p className="text-xs font-medium text-ink flex items-center gap-2">
               {uploadPostKey ? <Check size={12} className="text-ok" /> : <AlertTriangle size={12} className="text-warn" />}
-              Upload-Post API Key {uploadPostKey && <span className="text-ok">— set</span>}
+              {t('keyModal.uploadTitle')} {uploadPostKey && <span className="text-ok">{t('keyModal.uploadSet')}</span>}
             </p>
             {!uploadPostKey && (
               <>
                 <p className="text-xs text-muted">
-                  Required to publish your clips to TikTok, Instagram Reels, and YouTube Shorts. Free tier available, no credit card needed.
+                  {t('keyModal.uploadDesc')}
                 </p>
                 <ol className="text-xs text-muted space-y-1 list-decimal list-inside">
-                  <li>Register at <a href="https://app.upload-post.com/login" target="_blank" rel="noopener noreferrer" className="text-brass underline">app.upload-post.com</a></li>
-                  <li>Connect your TikTok, Instagram, or YouTube accounts</li>
-                  <li>Go to <a href="https://app.upload-post.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-brass underline">API Keys</a> and generate one</li>
-                  <li>Paste it below</li>
+                  <li>{t('keyModal.uploadStep1')} (<a href="https://app.upload-post.com/login" target="_blank" rel="noopener noreferrer" className="text-brass underline">app.upload-post.com</a>)</li>
+                  <li>{t('keyModal.uploadStep2')}</li>
+                  <li>{t('keyModal.uploadStep3')}</li>
+                  <li>{t('keyModal.uploadStep4')}</li>
                 </ol>
                 <input
                   type="text"
-                  placeholder="Paste your Upload-Post API key here..."
+                  placeholder={t('keyModal.uploadPlaceholder')}
                   className="input-field"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && e.target.value.trim()) {
@@ -2455,24 +2457,23 @@ function App() {
 
       {/* Pre-flight quality gate */}
       {qualityGate && (
-        <Modal isOpen={true} onClose={() => setQualityGate(null)} size="md" eyebrow="HEADS UP" title="low source quality">
+        <Modal isOpen={true} onClose={() => setQualityGate(null)} size="md" eyebrow={t('qualityGate.eyebrow')} title={t('qualityGate.title')}>
           <div className="space-y-4">
             <p className="text-sm text-ink2">
-              YouTube only offers <span className="text-brass font-semibold">{qualityGate.info.max_height}p</span> for this video
-              (below the {qualityGate.info.min_height}p we recommend). Processing anyway will produce lower-quality clips.
+              {t('qualityGate.desc', null, { maxHeight: qualityGate.info.max_height, minHeight: qualityGate.info.min_height })}
             </p>
             {qualityGate.info.cookies_invalid && (
               <p className="text-xs text-muted">
-                Your YouTube cookies look expired — refreshing them (export again from an incognito window) often unlocks HD.
+                {t('qualityGate.cookiesWarning')}
               </p>
             )}
             <div className="flex gap-2 justify-end pt-2">
-              <button onClick={() => setQualityGate(null)} className="btn-ghost">cancel</button>
+              <button onClick={() => setQualityGate(null)} className="btn-ghost">{t('qualityGate.cancel')}</button>
               <button
                 onClick={() => { const d = qualityGate.data; setQualityGate(null); handleProcess(d, true); }}
                 className="btn-primary"
               >
-                process anyway
+                {t('qualityGate.processAnyway')}
               </button>
             </div>
           </div>

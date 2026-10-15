@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Key, Eye, EyeOff, Check } from 'lucide-react';
+import { useLanguage } from '../i18n';
 
 export default function KeyInput({ onKeySet, savedKey }) {
+    const { t } = useLanguage();
     const [key, setKey] = useState(savedKey || '');
     const [isVisible, setIsVisible] = useState(false);
     const [isSaved, setIsSaved] = useState(!!savedKey);
@@ -50,11 +52,11 @@ export default function KeyInput({ onKeySet, savedKey }) {
                     disabled={!key || isSaved}
                     className={isSaved ? 'badge-ok px-4 cursor-default' : 'btn-primary'}
                 >
-                    {isSaved ? <><Check size={14} /> Ready</> : 'Set Key'}
+                    {isSaved ? <><Check size={14} /> {t('settingsTab.keysSaved')}</> : t('settingsTab.saveKeys')}
                 </button>
             </div>
             <p className="mt-3 text-xs text-muted">
-                Your key is stored locally in your browser for convenience.
+                {t('settingsTab.subtitle')}
                 <br />
                 <a
                     href="https://aistudio.google.com/app/apikey"
@@ -62,7 +64,7 @@ export default function KeyInput({ onKeySet, savedKey }) {
                     rel="noopener noreferrer"
                     className="text-brass hover:underline mt-1 inline-block"
                 >
-                    Get your free Gemini API Key here →
+                    {t('settingsTab.geminiGetLink', 'Get your free Gemini API Key here →')}
                 </a>
             </p>
         </div>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Scan, Scissors, Activity, Radio, CheckCircle } from 'lucide-react';
+import { useLanguage } from '../i18n';
 import { getApiUrl } from '../config';
 import { apiFetch } from '../lib/api';
 
 const ProcessingAnimation = ({ media, isComplete, syncedTime, isSyncedPlaying, syncTrigger }) => {
+  const { t } = useLanguage();
   const [videoSrc, setVideoSrc] = useState(null);
   const [isYouTube, setIsYouTube] = useState(false);
   const videoRef = useRef(null);
@@ -150,7 +152,7 @@ const ProcessingAnimation = ({ media, isComplete, syncedTime, isSyncedPlaying, s
               {isComplete
                 ? <CheckCircle size={14} className="shrink-0" />
                 : <Scan size={14} className="shrink-0" />}
-              <span className="truncate">{isComplete ? 'Analysis Complete' : 'Scanning Content...'}</span>
+              <span className="truncate">{isComplete ? t('processing.statusDone') : t('processing.statusAnalyzing')}</span>
             </div>
             {/* Carries nothing the left pill doesn't; it is the first thing to
                 go when there is no room. */}

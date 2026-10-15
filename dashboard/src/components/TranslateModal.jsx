@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2, Languages, AlertCircle } from 'lucide-react';
+import { useLanguage } from '../i18n';
 import Modal from './ui/Modal';
 
 const LANGUAGES = {
@@ -37,6 +38,7 @@ const LANGUAGES = {
 };
 
 export default function TranslateModal({ isOpen, onClose, onTranslate, isProcessing, videoUrl, hasApiKey }) {
+    const { t } = useLanguage();
     const [targetLanguage, setTargetLanguage] = useState('es');
 
     if (!isOpen) return null;
@@ -51,7 +53,7 @@ export default function TranslateModal({ isOpen, onClose, onTranslate, isProcess
             isOpen={isOpen}
             onClose={isProcessing ? undefined : onClose}
             eyebrow="DUB"
-            title="dub voice"
+            title={t('translateModal.title')}
             size="md"
             footer={
                 <div className="flex gap-3">
@@ -60,7 +62,7 @@ export default function TranslateModal({ isOpen, onClose, onTranslate, isProcess
                         disabled={isProcessing}
                         className="btn-ghost flex-1"
                     >
-                        Cancel
+                        {t('common.cancel')}
                     </button>
                     <button
                         onClick={handleSubmit}
@@ -70,12 +72,12 @@ export default function TranslateModal({ isOpen, onClose, onTranslate, isProcess
                         {isProcessing ? (
                             <>
                                 <Loader2 size={16} className="animate-spin" />
-                                Dubbing...
+                                {t('common.loading')}
                             </>
                         ) : (
                             <>
                                 <Languages size={16} />
-                                Dub Voice
+                                {t('translateModal.startDubbing')}
                             </>
                         )}
                     </button>
@@ -109,7 +111,7 @@ export default function TranslateModal({ isOpen, onClose, onTranslate, isProcess
             {/* Language Selection */}
             <div className="mb-5">
                 <label className="eyebrow block mb-2">
-                    Target Language
+                    {t('translateModal.selectLang')}
                 </label>
                 <select
                     value={targetLanguage}
@@ -127,14 +129,14 @@ export default function TranslateModal({ isOpen, onClose, onTranslate, isProcess
 
             {/* Info */}
             <p className="text-xs text-muted leading-relaxed mb-2">
-                The audio will be dubbed with AI-generated voice in the selected language, matching the original speaker's characteristics.
+                {t('translateModal.desc')}
             </p>
 
             {/* AI Act art. 50: we mark the file, the person publishing it is the
                 one who owes the audience the disclosure. Saying so here is the
                 only place they will read it. */}
             <p className="text-xs text-muted leading-relaxed mb-2">
-                The dubbed file is tagged as AI-generated content. When you publish it, disclose that the voice is synthetic.
+                {t('translateModal.notice')}
             </p>
 
             {/* Processing State */}

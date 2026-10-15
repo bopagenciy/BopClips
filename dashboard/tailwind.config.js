@@ -7,17 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Lumen · Night Foundry — values mirror tokens.css (kept literal so
-        // Tailwind alpha modifiers like bg-brass/10 compile)
-        paper: "oklch(13% 0.014 265 / <alpha-value>)",
-        paper2: "oklch(16.5% 0.015 265 / <alpha-value>)",
-        paper3: "oklch(20% 0.016 265 / <alpha-value>)",
+        // Bop Clips · Lumen Night Foundry — mirrors tokens.css
+        paper: "oklch(12.5% 0.012 260 / <alpha-value>)",
+        paper2: "oklch(15.5% 0.014 260 / <alpha-value>)",
+        paper3: "oklch(19.5% 0.016 260 / <alpha-value>)",
         ink: "oklch(96% 0.006 262 / <alpha-value>)",
         ink2: "oklch(86% 0.01 262 / <alpha-value>)",
         muted: "oklch(64% 0.012 262 / <alpha-value>)",
-        brass: "oklch(76% 0.17 50 / <alpha-value>)",
-        brassink: "oklch(17% 0.03 50 / <alpha-value>)",
-        coral: "oklch(68% 0.16 18 / <alpha-value>)",
+        brass: "oklch(79% 0.165 70 / <alpha-value>)",
+        brassink: "oklch(16% 0.03 70 / <alpha-value>)",
+        coral: "oklch(70% 0.16 55 / <alpha-value>)",
         ok: "oklch(75% 0.11 150 / <alpha-value>)",
         warn: "oklch(78% 0.14 75 / <alpha-value>)",
         danger: "oklch(66% 0.18 25 / <alpha-value>)",

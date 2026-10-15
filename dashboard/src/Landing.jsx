@@ -2,6 +2,7 @@ import React from 'react';
 import { Sparkles, Zap, Globe, FileVideo, Subtitles, Youtube, Instagram, Shield, Github, ArrowRight, Check, ChevronDown, Monitor, Cpu, Languages, Type, Upload, Scissors, Link2, Bot } from 'lucide-react';
 import PricingSection from './components/PricingSection';
 import { useAuth } from './contexts/AuthContext';
+import { useLanguage, LanguageSelector } from './i18n';
 import './landing.css';
 
 const APPARATUS_CALLOUTS = ['RATIO · 9:16', 'CLIPS · 3–15', 'HOOK · AUTO', 'SUBS · WORD-LEVEL'];
@@ -249,6 +250,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }) => (
 );
 
 export default function Landing({ onLaunchApp }) {
+  const { t } = useLanguage();
   const { billingEnabled } = useAuth();
   const [openFaq, setOpenFaq] = React.useState(null);
   const [heroUrl, setHeroUrl] = React.useState('');
@@ -425,21 +427,24 @@ export default function Landing({ onLaunchApp }) {
       <nav className="fixed top-0 w-full z-50 bg-paper border-b border-rule">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5 font-display text-xl lowercase text-ink tracking-tight">
-            <img src="/logo-openshorts.png" alt="OpenShorts logo" className="w-7 h-7" width="28" height="28" />
-            <span>openshorts</span>
+            <div className="w-8 h-8 bg-paper3 rounded-input overflow-hidden border border-rule shrink-0 flex items-center justify-center p-0.5">
+              <img src="/logo-bopclips-icon.png" alt="Bop Clips logo" className="w-full h-full object-contain" width="28" height="28" />
+            </div>
+            <span>bop clips</span>
           </a>
           <div className="hidden md:flex items-center gap-7 text-sm lowercase text-muted">
-            <a href="#features" className="hover:text-ink transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-ink transition-colors">How It Works</a>
-            {billingEnabled && <a href="#pricing" className="hover:text-ink transition-colors">Pricing</a>}
-            <a href="#comparison" className="hover:text-ink transition-colors">Comparison</a>
-            <a href="#faq" className="hover:text-ink transition-colors">FAQ</a>
-            <a href="/tools" className="hover:text-ink transition-colors">Free tools</a>
+            <a href="#features" className="hover:text-ink transition-colors">{t('landing.navFeatures')}</a>
+            <a href="#how-it-works" className="hover:text-ink transition-colors">{t('landing.navHowItWorks')}</a>
+            {billingEnabled && <a href="#pricing" className="hover:text-ink transition-colors">{t('landing.navPricing')}</a>}
+            <a href="#comparison" className="hover:text-ink transition-colors">{t('landing.navComparison')}</a>
+            <a href="#faq" className="hover:text-ink transition-colors">{t('landing.navFaq')}</a>
+            <a href="/tools" className="hover:text-ink transition-colors">{t('landing.navFreeTools')}</a>
           </div>
           <div className="flex items-center gap-3">
+            <LanguageSelector compact />
             {billingEnabled && (
               <a href="#pricing" className="md:hidden text-sm lowercase text-muted hover:text-ink transition-colors">
-                Pricing
+                {t('landing.navPricing')}
               </a>
             )}
             <a
@@ -447,12 +452,13 @@ export default function Landing({ onLaunchApp }) {
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 text-sm lowercase text-muted hover:text-ink transition-colors"
+              title="OpenShorts upstream project (MIT License)"
             >
               <Github size={16} />
               <span>GitHub</span>
             </a>
             <button onClick={onLaunchApp} className="btn-primary px-5 py-2 whitespace-nowrap">
-              Launch App
+              {t('landing.navLaunchApp')}
             </button>
           </div>
         </div>
@@ -462,16 +468,14 @@ export default function Landing({ onLaunchApp }) {
       <section className="hero-blueprint relative overflow-clip border-b border-rule pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-14 items-center">
           <div className="min-w-0">
-            <p className="eyebrow mb-6">00 · Free AI Clip Generator · Open Source</p>
+            <p className="eyebrow mb-6">{t('landing.heroBadge')}</p>
 
             <h1 className="hero-h1 mb-6">
-              <span className="block">long video in.</span>
-              <span className="block"><em>viral shorts</em> out.</span>
+              <span className="block">{t('landing.heroTitle')}</span>
             </h1>
 
-            <p className="hero-description text-muted max-w-2xl mb-8 leading-relaxed lowercase">
-              paste a youtube link or upload a podcast, stream or interview. the ai picks the 3 to 15 moments worth posting,
-              reframes them to 9:16 around the people talking, and burns in the captions. ready for tiktok, reels and shorts in minutes.
+            <p className="hero-description text-muted max-w-2xl mb-8 leading-relaxed">
+              {t('landing.heroSub')}
             </p>
 
             {/* The hero CTA is the product itself: paste a link and land in the
@@ -485,18 +489,18 @@ export default function Landing({ onLaunchApp }) {
                     type="url"
                     value={heroUrl}
                     onChange={(e) => setHeroUrl(e.target.value)}
-                    placeholder="paste a video link"
+                    placeholder={t('mediaInput.urlPlaceholder')}
                     className="input-field pl-11"
                     aria-label="Video link"
                   />
                 </div>
                 <button type="submit" className="btn-primary whitespace-nowrap">
-                  get free clips
+                  {t('landing.ctaLaunch')}
                   <ArrowRight size={16} />
                 </button>
                 <button type="button" onClick={onLaunchApp} className="btn-ghost whitespace-nowrap">
                   <Upload size={16} />
-                  upload a file
+                  {t('mediaInput.tabUpload')}
                 </button>
               </div>
             </form>
@@ -1075,18 +1079,16 @@ export default function Landing({ onLaunchApp }) {
           </nav>
           <div className="border-t border-rule pt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src="/logo-openshorts.png" alt="OpenShorts" className="w-6 h-6" />
-              <span className="text-sm text-muted">OpenShorts — Free Open Source Clip Generator & AI UGC Video Creator</span>
+              <img src="/logo-bopclips-icon.png" alt="Bop Clips" className="w-6 h-6 object-contain" />
+              <span className="text-sm text-muted">{t('landing.footerAttribution')}</span>
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm lowercase text-muted">
-              <a href="https://github.com/mutonby/openshorts" target="_blank" rel="noopener noreferrer" className="hover:text-ink transition-colors">GitHub</a>
-              <a href="#features" className="hover:text-ink transition-colors">Features</a>
-              <a href="#faq" className="hover:text-ink transition-colors">FAQ</a>
+              <a href="https://github.com/mutonby/openshorts" target="_blank" rel="noopener noreferrer" className="hover:text-ink transition-colors" title="OpenShorts upstream project (MIT License)">GitHub (Upstream)</a>
+              <a href="#features" className="hover:text-ink transition-colors">{t('landing.navFeatures')}</a>
+              <a href="#faq" className="hover:text-ink transition-colors">{t('landing.navFaq')}</a>
               <a href="/terms" className="hover:text-ink transition-colors whitespace-nowrap">Terms</a>
               <a href="/privacy" className="hover:text-ink transition-colors whitespace-nowrap">Privacy</a>
               <a href="/legal-notice" className="hover:text-ink transition-colors whitespace-nowrap">Legal Notice</a>
-              <a href="/refunds" className="hover:text-ink transition-colors whitespace-nowrap">Refunds</a>
-              <a href="/report-content" className="hover:text-ink transition-colors whitespace-nowrap">Report Content</a>
             </div>
           </div>
         </div>

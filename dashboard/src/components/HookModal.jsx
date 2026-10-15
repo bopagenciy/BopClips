@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react';
 import RemotionPreview from './RemotionPreview';
 import Modal from './ui/Modal';
 import SegmentedControl from './ui/SegmentedControl';
+import { useLanguage } from '../i18n';
 
 const ENTRANCE_OPTIONS = [
     { value: 'spring', label: 'Bounce' },
@@ -58,6 +59,7 @@ function loadHookPrefs() {
 }
 
 export default function HookModal({ isOpen, onClose, onGenerate, onRemove, isProcessing, videoUrl, initialText, durationInSeconds, existingSubtitles, hasCaptions, serverRender, burnedHook }) {
+    const { t } = useLanguage();
     const prefs = loadHookPrefs();
     const [text, setText] = useState(initialText || 'POV: You are using the viral hook feature');
     // Stored as `pos`, not `position`: before 'auto' existed every save wrote
@@ -107,7 +109,7 @@ export default function HookModal({ isOpen, onClose, onGenerate, onRemove, isPro
         + "@font-face{font-family:'Anton-Regular';src:url('/fonts/Anton-Regular.ttf') format('truetype');font-weight:400;}";
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="lg" eyebrow="EDITOR · HOOK" title="edit hook">
+        <Modal isOpen={isOpen} onClose={onClose} size="lg" eyebrow={t('hookModal.eyebrow', 'EDITOR · HOOK')} title={t('hookModal.title', 'edit hook')}>
             <style>{pillFontFace}</style>
             <div className="flex flex-col md:flex-row gap-6">
                 {/* Left: Preview */}
@@ -290,7 +292,7 @@ export default function HookModal({ isOpen, onClose, onGenerate, onRemove, isPro
                                         disabled={isProcessing}
                                         className="text-warn underline underline-offset-2 hover:opacity-80 transition-opacity"
                                     >
-                                        remove hook from clip
+                                        {t('hookModal.removeHook', 'remove hook from clip')}
                                     </button>
                                 )}
                             </div>
@@ -303,7 +305,7 @@ export default function HookModal({ isOpen, onClose, onGenerate, onRemove, isPro
 
                     <div className="flex gap-2 mt-5 shrink-0">
                         <button onClick={onClose} className="btn-ghost">
-                            cancel
+                            {t('common.cancel', 'cancel')}
                         </button>
                         <button
                             onClick={() => {
@@ -322,7 +324,7 @@ export default function HookModal({ isOpen, onClose, onGenerate, onRemove, isPro
                             className="btn-primary flex-1"
                         >
                             {isProcessing && <Loader2 size={16} className="animate-spin text-brassink" />}
-                            {isProcessing ? 'saving...' : (burnedHook ? 'update hook' : 'add hook')}
+                            {isProcessing ? t('hookModal.saving', 'saving...') : (burnedHook ? t('hookModal.updateHook', 'update hook') : t('hookModal.addHook', 'add hook'))}
                         </button>
                     </div>
                 </div>

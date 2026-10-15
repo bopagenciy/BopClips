@@ -1,33 +1,14 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState, useMemo } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, LayoutDashboard, Sparkles } from 'lucide-react';
 import Modal from './ui/Modal';
+import { useLanguage } from '../i18n';
 
-const TOUR = [
-  {
-    target: '[data-tutorial="nav-clips"]',
-    title: 'Clip Generator',
-    body: 'This is the tool people come for. A long video in, vertical shorts out. The other menu items stay locked until you finish one run.',
-  },
-  {
-    target: '[data-tutorial="source-tabs"]',
-    title: 'Upload or paste a link',
-    body: 'Drop an MP4, or switch to Video URL and paste YouTube, TikTok, Instagram…',
-  },
-  {
-    target: '[data-tutorial="drop-zone"]',
-    title: 'Your video',
-    body: 'Click the box or paste the link here. Keep files under 500MB.',
-  },
-  {
-    target: '[data-tutorial="output-format"]',
-    title: 'Output format',
-    body: '9:16 is TikTok, Reels and Shorts. Leave it unless you need a square feed post or landscape.',
-  },
-  {
-    target: '[data-tutorial="generate"]',
-    title: 'Generate',
-    body: 'Tick that you have the rights, then generate. That is the whole first run.',
-  },
+const TOUR_TARGETS = [
+  '[data-tutorial="nav-clips"]',
+  '[data-tutorial="source-tabs"]',
+  '[data-tutorial="drop-zone"]',
+  '[data-tutorial="output-format"]',
+  '[data-tutorial="generate"]',
 ];
 
 function visibleTarget(selector) {
@@ -65,8 +46,37 @@ function placeTip(rect, tipW, tipH, vw, vh) {
  * QA: #app?tutorial=1
  */
 export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onSkip, onDismissCelebrate }) {
+  const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const [spot, setSpot] = useState(null);
+
+  const tour = useMemo(() => [
+    {
+      target: TOUR_TARGETS[0],
+      title: t('tutorial.step1Title'),
+      body: t('tutorial.step1Body'),
+    },
+    {
+      target: TOUR_TARGETS[1],
+      title: t('tutorial.step2Title'),
+      body: t('tutorial.step2Body'),
+    },
+    {
+      target: TOUR_TARGETS[2],
+      title: t('tutorial.step3Title'),
+      body: t('tutorial.step3Body'),
+    },
+    {
+      target: TOUR_TARGETS[3],
+      title: t('tutorial.step4Title'),
+      body: t('tutorial.step4Body'),
+    },
+    {
+      target: TOUR_TARGETS[4],
+      title: t('tutorial.step5Title'),
+      body: t('tutorial.step5Body'),
+    },
+  ], [t]);
 
   useEffect(() => {
     if (phase === 'coach') setStep(0);
@@ -78,7 +88,7 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
       return;
     }
     const measure = () => {
-      const spec = TOUR[step];
+      const spec = tour[step];
       if (!spec) { setSpot(null); return; }
       const el = visibleTarget(spec.target);
       if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -111,29 +121,28 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
       window.removeEventListener('resize', measure);
       window.removeEventListener('scroll', measure, true);
     };
-  }, [phase, step, jobStatus]);
+  }, [phase, step, jobStatus, tour]);
 
   if (phase === 'intro') {
     return (
-      <Modal isOpen hideClose eyebrow="FIRST CLIPS" title="Let's make your first shorts" size="md">
+      <Modal isOpen hideClose eyebrow={t('tutorial.introEyebrow')} title={t('tutorial.introTitle')} size="md">
         <div className="flex items-start gap-3 mb-4">
           <div className="w-10 h-10 rounded-input bg-paper3 flex items-center justify-center shrink-0">
             <LayoutDashboard size={18} className="text-brass" />
           </div>
           <p className="text-sm text-ink2 leading-relaxed">
-            People come here for <b className="text-ink font-medium">Clip Generator</b>: a long video in,
-            vertical shorts out. We will walk the screen, then you run one video.
+            {t('tutorial.introBody')}
           </p>
         </div>
         <button type="button" onClick={onStart} className="btn-primary w-full">
-          Show me around <ArrowRight size={16} />
+          {t('tutorial.showAround')} <ArrowRight size={16} />
         </button>
         <button
           type="button"
           onClick={onSkip}
           className="w-full mt-2 text-muted hover:text-ink text-sm lowercase py-2 transition-colors"
         >
-          I'll explore later
+          {t('tutorial.exploreLater')}
         </button>
       </Modal>
     );
@@ -146,22 +155,22 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
           bottom-3 md:bottom-6 card p-4"
         role="status"
       >
-        <p className="eyebrow mb-2">First clips</p>
+        <p className="eyebrow mb-2">{t('tutorial.introEyebrow')}</p>
         <p className={`text-sm leading-relaxed ${jobStatus === 'error' ? 'text-danger' : 'text-muted'}`}>
           {jobStatus === 'error'
-            ? `${errorText ? `That video could not be clipped: ${errorText}` : 'That run failed.'} Try another video. Other tools unlock once one job finishes.`
-            : 'Hang on — Clip Generator is finding the moments and cutting vertical shorts.'}
+            ? (errorText ? t('tutorial.coachError', null, { error: errorText }) : t('tutorial.coachFailed'))
+            : t('tutorial.coachProcessing')}
         </p>
       </div>
     );
   }
 
   if (phase === 'coach') {
-    const last = step >= TOUR.length - 1;
-    const spec = TOUR[step] || TOUR[0];
-    const onLast = () => setStep(TOUR.length);
+    const last = step >= tour.length - 1;
+    const spec = tour[step] || tour[0];
+    const onLast = () => setStep(tour.length);
 
-    if (step >= TOUR.length) {
+    if (step >= tour.length) {
       return (
         <div
           className="fixed z-[80] inset-x-3 bottom-3 md:inset-x-auto md:right-6 md:bottom-6 md:max-w-sm
@@ -169,10 +178,10 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
           role="status"
         >
           <p className="text-sm text-muted leading-snug flex-1 min-w-0">
-            Your turn — add a video and generate.
+            {t('tutorial.yourTurn')}
           </p>
           <button type="button" onClick={onSkip} className="text-xs lowercase text-muted hover:text-ink shrink-0">
-            skip
+            {t('common.cancel')}
           </button>
         </div>
       );
@@ -205,13 +214,13 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
             maxWidth: 'calc(100vw - 24px)',
           }}
         >
-          <p className="eyebrow mb-2">{String(step + 1).padStart(2, '0')} / {String(TOUR.length).padStart(2, '0')}</p>
+          <p className="eyebrow mb-2">{String(step + 1).padStart(2, '0')} / {String(tour.length).padStart(2, '0')}</p>
           <h3 className="font-display lowercase text-lg text-ink leading-tight mb-2">{spec.title}</h3>
           <p className="text-sm text-muted leading-relaxed mb-4">{spec.body}</p>
           <div className="flex flex-wrap items-center gap-2">
             {step > 0 && (
               <button type="button" onClick={() => setStep((s) => s - 1)} className="btn-ghost text-sm px-3">
-                <ArrowLeft size={14} /> Back
+                <ArrowLeft size={14} /> {t('tutorial.back')}
               </button>
             )}
             <button
@@ -219,11 +228,11 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
               onClick={last ? onLast : () => setStep((s) => s + 1)}
               className="btn-primary text-sm px-4 ml-auto"
             >
-              {last ? 'Got it' : 'Next'} <ArrowRight size={14} />
+              {last ? t('tutorial.gotIt') : t('tutorial.next')} <ArrowRight size={14} />
             </button>
           </div>
           <button type="button" onClick={onSkip} className="mt-3 text-xs lowercase text-muted hover:text-ink transition-colors">
-            skip — unlock the rest
+            {t('tutorial.skipUnlock')}
           </button>
         </div>
       </div>
@@ -232,19 +241,19 @@ export default function ClipTutorial({ phase, jobStatus, errorText, onStart, onS
 
   if (phase === 'celebrate') {
     return (
-      <Modal isOpen onClose={onDismissCelebrate} hideClose eyebrow="DONE" title="You made your first clips" size="sm">
+      <Modal isOpen onClose={onDismissCelebrate} hideClose eyebrow={t('tutorial.celebrateEyebrow')} title={t('tutorial.celebrateTitle')} size="sm">
         <div className="text-center py-2">
           <div className="inline-flex p-3 bg-paper3 rounded-full text-ok mb-4">
             <CheckCircle2 size={28} />
           </div>
           <p className="text-sm text-ink2 leading-relaxed mb-1">
-            That is the whole product, on one video.
+            {t('tutorial.celebrateBody1')}
           </p>
           <p className="text-sm text-muted leading-relaxed mb-6">
-            The other tools are unlocked. Come back to Clip Generator whenever you have another long video.
+            {t('tutorial.celebrateBody2')}
           </p>
           <button type="button" onClick={onDismissCelebrate} className="btn-primary w-full">
-            <Sparkles size={16} /> See my clips
+            <Sparkles size={16} /> {t('tutorial.seeClips')}
           </button>
         </div>
       </Modal>
